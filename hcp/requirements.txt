@@ -1,0 +1,7 @@
+jupyter
+boto3
+matplotlib
+nibabel
+pandas
+seaborn
+s3fs
