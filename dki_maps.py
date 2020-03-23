@@ -37,6 +37,7 @@ their paper Hansen and Jespersen (2016)). The total size of the downloaded data
 is 192 MBytes, however you only need to fetch it once.
 """
 
+print("Getting data")
 fraw, fbval, fbvec, t1_fname = get_fnames('cfin_multib')
 
 data, affine = load_nifti(fraw)
@@ -54,6 +55,7 @@ Before fitting the data, we preform some data pre-processing. We first compute
 a brain mask to avoid unnecessary calculations on the background of the image.
 """
 
+print("Generating mask")
 maskdata, mask = median_otsu(data, vol_idx=[0, 1], median_radius=4, numpass=2,
                              autocrop=False, dilate=1)
 
@@ -69,7 +71,10 @@ to the dataset's large number of diffusion-weighted volumes, these algorithm
 might take some hours to process.
 """
 
+print("Denoising")
 den, sig = mppca(data, patch_radius=4, return_sigma=True)
+
+print("Removing Gibbs artifacts")
 deng = gibbs_removal(den, slice_axis=2)
 
 # img = nib.load('denoised_mppca.nii.gz')
@@ -84,7 +89,7 @@ left panel show the difference between raw and denoised data - this difference
 map does not present anatomicaly information, indicating that PCA denoising
 suppression noise with minimal low of anatomical information. Lower right map
 shows the noise std estimate. Lower noise std values are underestimated in
-background since noise in background appraoches a Rayleigh distribution.  
+background since noise in background appraoches a Rayleigh distribution.
 """
 
 axial_slice = 10
@@ -132,19 +137,19 @@ To fit the data using the defined model object, we call the ``fit`` function of
 this object:
 """
 
-# fitting raw data
+print("Fitting DKI model on raw data")
 dkifitraw = dkimodel.fit(data, mask)
 
-# fitting processed data
+print("Fitting DKI model on denoised and de-Gibbs'ed data")
 dkifit = dkimodel.fit(deng, mask)
 
-# fitting dti for reference
+print("Fitting DTI for reference")
 dtifit = dtimodel.fit(deng, mask)
 
-# fitting msdki
+print("Fitting mean signal DKI on denoised and de-Gibbs'ed data")
 msdkifit = msdkimodel.fit(deng, mask)
 
-# fitting msdki
+print("Fitting mean signal DKI on raw data")
 msdkifitraw = msdkimodel.fit(data, mask)
 
 
@@ -158,6 +163,7 @@ fractional anisotropy (FA), the mean diffusivity (MD), the axial diffusivity
 (AD) and the radial diffusivity (RD) from the DiffusionKurtosisiFit instance.
 """
 
+print("Extracting DKI maps")
 FAraw = dkifitraw.fa
 MDraw = dkifitraw.md
 ADraw = dkifitraw.ad
@@ -168,7 +174,7 @@ MDden = dkifit.md
 ADden = dkifit.ad
 RDden = dkifit.rd
 
-# dti parametric maps for reference
+print("Extracting DTI maps for reference")
 FAdti = dtifit.fa
 MDdti = dtifit.md
 ADdti = dtifit.ad
@@ -181,6 +187,7 @@ panels) and the tensor model (lower panels) are plotted for a selected axial
 slice.
 """
 
+print("Visualizing results")
 axial_slice = 10
 
 sc = 1000  # diffusion scaling
