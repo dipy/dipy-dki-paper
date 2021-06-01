@@ -16,7 +16,7 @@ _STANDARD_OUT_FILE_NAME = 'stdout.txt'  # Standard Output file
 _STANDARD_ERR_FILE_NAME = 'stderr.txt'  # Standard Error file
 
 _TASK_FILE = "task_dki_hcp_variability.py"
-_OUTBUCKET = "hcp.dki"
+_OUTBUCKET = "XXX"
 
 _TIMEOUT = 1440 * 2
 
